@@ -1,5 +1,27 @@
 import * as THREE from 'three';
 
+const CONFIG = {
+    SKY: {
+        Y: 0,      // Up/Down
+        Z: -5,     // Depth
+        SCALE_X: 30,
+        SCALE_Y: 20
+    },
+    MOUNTAINS: {
+        Y: -1,     // Up/Down
+        Z: -2,     // Depth
+        SCALE_Y: 10, // Height
+        SPEED: 0.02
+    },
+    GROUND: {
+        Y: -6,     // Up/Down
+        Z: -1,     // Depth
+        WIDTH: 40,
+        HEIGHT: 4,
+        SPEED: 0.2
+    }
+};
+
 export class Background {
     private layers: THREE.Mesh[] = [];
     private sky: THREE.Mesh;
@@ -8,14 +30,14 @@ export class Background {
         const loader = new THREE.TextureLoader();
 
         // Sky (Static)
-        const skyGeo = new THREE.PlaneGeometry(30, 20);
+        const skyGeo = new THREE.PlaneGeometry(CONFIG.SKY.SCALE_X, CONFIG.SKY.SCALE_Y);
         const skyMat = new THREE.MeshBasicMaterial({ map: loader.load('/sky.svg') });
         this.sky = new THREE.Mesh(skyGeo, skyMat);
-        this.sky.position.z = -5;
+        this.sky.position.set(0, CONFIG.SKY.Y, CONFIG.SKY.Z);
         scene.add(this.sky);
 
         // Mountains (Slow Parallax)
-        this.createLayer(scene, '/mountain.svg', -2, 4, -4);
+        this.createLayer(scene, '/mountain.svg', CONFIG.MOUNTAINS.Z, CONFIG.MOUNTAINS.SCALE_Y, CONFIG.MOUNTAINS.Y);
 
         // Ground (Fast - matches game speed)
         // We create a tiling ground
@@ -24,10 +46,10 @@ export class Background {
         groundTex.wrapT = THREE.RepeatWrapping;
         groundTex.repeat.set(20, 1);
 
-        const groundGeo = new THREE.PlaneGeometry(40, 4);
+        const groundGeo = new THREE.PlaneGeometry(CONFIG.GROUND.WIDTH, CONFIG.GROUND.HEIGHT);
         const groundMat = new THREE.MeshBasicMaterial({ map: groundTex });
         const ground = new THREE.Mesh(groundGeo, groundMat);
-        ground.position.set(0, -6, -1);
+        ground.position.set(0, CONFIG.GROUND.Y, CONFIG.GROUND.Z);
         scene.add(ground);
         this.layers.push(ground);
     }
@@ -54,13 +76,13 @@ export class Background {
         // Ground is index 1 (last added)
         if (this.layers[1]) {
             const groundTex = (this.layers[1].material as THREE.MeshBasicMaterial).map;
-            if (groundTex) groundTex.offset.x += 0.2 * deltaTime * speed;
+            if (groundTex) groundTex.offset.x += CONFIG.GROUND.SPEED * deltaTime * speed;
         }
 
         // Mountains index 0
         if (this.layers[0]) {
             const mtTex = (this.layers[0].material as THREE.MeshBasicMaterial).map;
-            if (mtTex) mtTex.offset.x += 0.02 * deltaTime * speed;
+            if (mtTex) mtTex.offset.x += CONFIG.MOUNTAINS.SPEED * deltaTime * speed;
         }
     }
 }
