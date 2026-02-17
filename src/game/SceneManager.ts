@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { Player } from './Player';
 import { Obstacle } from './Obstacle';
 import { checkCollision } from './Collision';
+import { Background } from './Background';
 
 export class SceneManager {
     private scene: THREE.Scene;
@@ -11,6 +12,7 @@ export class SceneManager {
 
     // Game Entities
     private player: Player;
+    private background: Background;
     private obstacles: Obstacle[] = [];
 
     // Game State
@@ -47,6 +49,7 @@ export class SceneManager {
         window.addEventListener('resize', this.onWindowResize.bind(this));
 
         // --- Game Setup ---
+        this.background = new Background(this.scene);
         this.player = new Player(this.scene);
         this.setupInputs();
         this.setupUI();
@@ -178,6 +181,9 @@ export class SceneManager {
         this.speedMultiplier += deltaTime * 0.02;
         this.score += deltaTime * 10;
         this.updateScoreUI();
+
+        // Background
+        this.background.update(deltaTime, this.speedMultiplier);
 
         // Player
         this.player.update(deltaTime, this.input);

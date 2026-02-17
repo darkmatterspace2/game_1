@@ -9,7 +9,14 @@ export class Obstacle {
         const width = 0.4 + Math.random() * 0.5;
         const height = 0.4 + Math.random() * 1.0;
         const geometry = new THREE.PlaneGeometry(width, height);
-        const material = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Red obstacle
+
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('/obstacle.svg');
+        const material = new THREE.MeshBasicMaterial({
+            map: texture,
+            transparent: true,
+            color: 0xffffff
+        });
         this.mesh = new THREE.Mesh(geometry, material);
 
         // Pivot is center by default. Position y needs to be half height + ground level to sit on ground.

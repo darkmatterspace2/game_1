@@ -16,8 +16,14 @@ export class Player {
     private readonly groundY: number = -3.5;
 
     constructor(scene: THREE.Scene) {
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('/player.svg');
         const geometry = new THREE.PlaneGeometry(1, 1);
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 }); // Green player
+        const material = new THREE.MeshBasicMaterial({
+            map: texture,
+            transparent: true,
+            color: 0xffffff // White so texture colors show correctly
+        });
         this.mesh = new THREE.Mesh(geometry, material);
 
         this.mesh.position.y = this.groundY;
