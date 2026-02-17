@@ -11,14 +11,14 @@ export class Player {
     private velocity: THREE.Vector3;
     private isJumping: boolean;
     private readonly speed: number = 5;
-    private readonly jumpForce: number = 10;
+    private readonly jumpForce: number = 15;
     private readonly gravity: number = -30;
     private readonly groundY: number = -3.5;
 
     constructor(scene: THREE.Scene) {
         const textureLoader = new THREE.TextureLoader();
         const texture = textureLoader.load('/player.svg');
-        const geometry = new THREE.PlaneGeometry(1, 1);
+        const geometry = new THREE.PlaneGeometry(2, 2);
         const material = new THREE.MeshBasicMaterial({
             map: texture,
             transparent: true,
