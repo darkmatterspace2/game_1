@@ -64,8 +64,10 @@ export class SceneManager {
         window.addEventListener('keyup', (e) => this.handleKey(e, false));
 
         // Basic Touch Controls
-        window.addEventListener('touchstart', (e) => this.handleTouch(e, true));
-        window.addEventListener('touchend', (e) => this.handleTouch(e, false));
+        window.addEventListener('touchstart', (e) => this.handleTouch(e), { passive: false });
+        window.addEventListener('touchmove', (e) => this.handleTouch(e), { passive: false });
+        window.addEventListener('touchend', (e) => this.handleTouch(e));
+        window.addEventListener('touchcancel', (e) => this.handleTouch(e));
     }
 
     private handleKey(e: KeyboardEvent, pressed: boolean) {
@@ -74,30 +76,40 @@ export class SceneManager {
         if (e.code === 'ArrowUp' || e.code === 'Space' || e.code === 'KeyW') this.input.jump = pressed;
     }
 
-    private handleTouch(e: TouchEvent, pressed: boolean) {
-        if (!pressed) {
-            this.input.left = false;
-            this.input.right = false;
-            return;
-        }
+    private handleTouch(e: TouchEvent) {
+        // Prevent default browser zooming/scrolling
+        // e.preventDefault(); // Note: might block click events on UI buttons if not careful, but usually needed for games.
+        // Actually, we should be careful with e.preventDefault() on the whole window if we have UI buttons.
+        // But for gameplay controls, we need it. 
+        // Best ensures UI buttons (restart) still work if they are on top.
 
-        const touchX = e.touches[0].clientX;
         const width = window.innerWidth;
+        const halfWidth = width / 2;
+        const quarterWidth = width / 4;
 
-        // Simple zone logic:
-        // Left 1/3: Move Left
-        // Right 1/3: Move Right
-        // Center: Jump
-        if (touchX < width * 0.33) {
-            this.input.left = true;
-            this.input.right = false;
-        } else if (touchX > width * 0.66) {
-            this.input.right = true;
-            this.input.left = false;
-        } else {
-            this.input.jump = true;
-            // Auto reset jump after simple tap effect if needed, but Player handles holding logic.
-            setTimeout(() => this.input.jump = false, 150);
+        // Reset inputs based on active touches
+        this.input.left = false;
+        this.input.right = false;
+        this.input.jump = false;
+
+        // Iterate through all active touches
+        for (let i = 0; i < e.touches.length; i++) {
+            const touch = e.touches[i];
+            const x = touch.clientX;
+
+            if (x > halfWidth) {
+                // Right Half -> Jump
+                this.input.jump = true;
+            } else {
+                // Left Half -> Movement
+                if (x < quarterWidth) {
+                    // Left 25% -> Move Left
+                    this.input.left = true;
+                } else {
+                    // 25-50% -> Move Right
+                    this.input.right = true;
+                }
+            }
         }
     }
 
