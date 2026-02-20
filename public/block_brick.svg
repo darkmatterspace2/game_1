@@ -1,0 +1,22 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <!-- Base Color -->
+    <rect width="64" height="64" fill="#C04000" />
+    
+    <!-- Top Highlight -->
+    <rect x="0" y="0" width="64" height="4" fill="#E67A45" />
+    <rect x="0" y="32" width="64" height="4" fill="#E67A45" />
+
+    <!-- Left Highlight -->
+    <rect x="0" y="0" width="4" height="64" fill="#E67A45" />
+    <rect x="32" y="32" width="4" height="32" fill="#E67A45" />
+
+    <!-- Mortar Lines -->
+    <!-- Horizontal -->
+    <rect x="0" y="28" width="64" height="4" fill="#6A2300" />
+    <rect x="0" y="60" width="64" height="4" fill="#6A2300" />
+
+    <!-- Vertical -->
+    <rect x="28" y="0" width="4" height="32" fill="#6A2300" />
+    <rect x="60" y="32" width="4" height="32" fill="#6A2300" />
+    <rect x="-4" y="32" width="4" height="32" fill="#6A2300" />
+</svg>

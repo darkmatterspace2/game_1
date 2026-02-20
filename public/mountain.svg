@@ -1,5 +1,56 @@
-<svg width="800" height="300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" preserveAspectRatio="none">
-  <path d="M0,300 L200,100 L400,300 L600,150 L800,300 Z" fill="#795548"/>
-  <path d="M150,150 L200,100 L250,150 Z" fill="#fff" opacity="0.8"/>
-  <path d="M550,200 L600,150 L650,200 Z" fill="#fff" opacity="0.8"/>
+<svg width="1024" height="512" viewBox="0 0 1024 512" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <defs>
+        <!-- Gradients for different mountain depths to simulate realistic earthy brown/green atmospheric perspective -->
+        <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#9EAF8F" />
+            <stop offset="100%" stop-color="#C6D7B7" />
+        </linearGradient>
+        <linearGradient id="midGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#558D43" />
+            <stop offset="100%" stop-color="#80BE60" />
+        </linearGradient>
+        <linearGradient id="fgGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6B4D2F" />
+            <stop offset="100%" stop-color="#9A754E" />
+        </linearGradient>
+        <filter id="shadowGlow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="2" dy="6" stdDeviation="3" flood-color="#141E0F" flood-opacity="0.35" />
+        </filter>
+        <filter id="backGlow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="-3" stdDeviation="5" flood-color="#FFFFFF" flood-opacity="0.5" />
+        </filter>
+    </defs>
+    
+    <rect width="1024" height="512" fill="transparent" />
+
+    <!-- LAYER 1: BACK HILLS (Distant Misty Olive-Green) -->
+    <path d="M -20 530 L -20 350 L 0 350 C 150 350, 200 180, 400 180 C 600 180, 650 320, 800 320 C 900 320, 950 350, 1024 350 L 1044 350 L 1044 530 Z" fill="url(#bgGrad)" stroke="#7F966B" stroke-width="4" filter="url(#backGlow)"/>
+    <path d="M 330 196 Q 400 240 450 196" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" opacity="0.6"/>
+    
+    <!-- LAYER 2: MID HILLS (Lush Green) -->
+    <path d="M -20 530 L -20 400 L 0 400 C 100 400, 150 280, 280 280 C 410 280, 460 420, 620 420 C 780 420, 850 320, 940 320 C 980 320, 1000 400, 1024 400 L 1044 400 L 1044 530 Z" fill="url(#midGrad)" stroke="#326620" stroke-width="6" filter="url(#shadowGlow)"/>
+    <path d="M 210 295 Q 280 360 330 295" fill="none" stroke="#B1E68C" stroke-width="14" stroke-linecap="round" opacity="0.6"/>
+    <path d="M 880 330 Q 940 380 980 335" fill="none" stroke="#B1E68C" stroke-width="10" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- LAYER 3: FOREGROUND HILLS (Rich Earthy Brown) -->
+    <path d="M -20 530 L -20 460 L 0 460 C 120 460, 180 340, 360 340 C 540 340, 600 480, 800 480 C 920 480, 950 460, 1024 460 L 1044 460 L 1044 530 Z" fill="url(#fgGrad)" stroke="#442E1B" stroke-width="8" filter="url(#shadowGlow)"/>
+    <path d="M 250 360 Q 360 450 430 362" fill="none" stroke="#D1A77E" stroke-width="20" stroke-linecap="round" opacity="0.6"/>
+    <path d="M 880 470 Q 950 510 1000 475" fill="none" stroke="#D1A77E" stroke-width="12" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- DECORATIONS (Dark Forest Green Bushes / Trees) -->
+    <circle cx="180" cy="450" r="30" fill="#2E5A18" stroke="#163806" stroke-width="5" />
+    <circle cx="140" cy="470" r="35" fill="#204A0D" stroke="#163806" stroke-width="5" />
+    <circle cx="210" cy="480" r="25" fill="#3E7522" stroke="#163806" stroke-width="5" />
+    <path d="M 170 425 Q 180 440 190 425" fill="none" stroke="#87C45A" stroke-width="4" stroke-linecap="round"/>
+
+    <circle cx="680" cy="445" r="35" fill="#2E5A18" stroke="#163806" stroke-width="5" />
+    <circle cx="630" cy="460" r="45" fill="#204A0D" stroke="#163806" stroke-width="5" />
+    <circle cx="730" cy="470" r="30" fill="#3E7522" stroke="#163806" stroke-width="5" />
+    <path d="M 610 425 Q 630 450 650 425" fill="none" stroke="#87C45A" stroke-width="5" stroke-linecap="round"/>
+    <path d="M 665 415 Q 680 430 695 415" fill="none" stroke="#87C45A" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- Mist and Wind Swirls in Valleys (Warm hazy sunlight colors) -->
+    <path d="M 460 490 Q 520 460 580 490" fill="none" stroke="#FFE9B8" stroke-width="5" stroke-dasharray="15 20" stroke-linecap="round" opacity="0.4"/>
+    <path d="M 50 480 Q 150 430 250 480" fill="none" stroke="#FFE9B8" stroke-width="5" stroke-dasharray="20 25" stroke-linecap="round" opacity="0.4"/>
+    <path d="M 850 490 Q 900 470 950 490" fill="none" stroke="#FFE9B8" stroke-width="4" stroke-dasharray="10 15" stroke-linecap="round" opacity="0.3"/>
 </svg>

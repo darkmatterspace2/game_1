@@ -2,22 +2,22 @@ import * as THREE from 'three';
 
 const CONFIG = {
     SKY: {
-        Y: 0,      // Up/Down
+        Y: 3.0,      // Up/Down
         Z: -5,     // Depth
-        SCALE_X: 30,
-        SCALE_Y: 20
+        SCALE_X: 40,
+        SCALE_Y: 22.5 // Maintains 16:9 ratio
     },
     MOUNTAINS: {
-        Y: -1,     // Up/Down
+        Y: 1.0,     // Align perfectly below sky / overlap ground
         Z: -2,     // Depth
         SCALE_Y: 10, // Height
         SPEED: 0.02
     },
     GROUND: {
-        Y: -6,     // Up/Down
+        Y: -7.0,     // Up/Down: mesh ranges from -10 to -4. Lines up behind physical blocks at Y=-4.
         Z: -1,     // Depth
         WIDTH: 40,
-        HEIGHT: 4,
+        HEIGHT: 6,
         SPEED: 0.2
     }
 };
@@ -36,33 +36,29 @@ export class Background {
         this.sky.position.set(0, CONFIG.SKY.Y, CONFIG.SKY.Z);
         scene.add(this.sky);
 
-        // Mountains (Slow Parallax)
-        this.createLayer(scene, '/mountain.svg', CONFIG.MOUNTAINS.Z, CONFIG.MOUNTAINS.SCALE_Y, CONFIG.MOUNTAINS.Y);
+        // Mountains (Slow Parallax) ratio 1024x512 = 2
+        // We want repeat proportional to width / (height * 2) = 40 / (12 * 2) = 1.666
+        this.createLayer(scene, '/mountain.svg', CONFIG.MOUNTAINS.Z, CONFIG.MOUNTAINS.SCALE_Y, CONFIG.MOUNTAINS.Y, 40 / (CONFIG.MOUNTAINS.SCALE_Y * 2));
 
-        // Ground (Fast - matches game speed)
-        // We create a tiling ground
+        // Ground (Fast Parallax) matches format ratio 1024x512 = 2
+        // We want repeat proportional to width / (height * 2) = 40 / (6 * 2) = 3.333
         const groundTex = loader.load('/ground.svg');
         groundTex.wrapS = THREE.RepeatWrapping;
-        groundTex.wrapT = THREE.RepeatWrapping;
-        groundTex.repeat.set(20, 1);
+        groundTex.repeat.set(CONFIG.GROUND.WIDTH / (CONFIG.GROUND.HEIGHT * 2), 1);
 
         const groundGeo = new THREE.PlaneGeometry(CONFIG.GROUND.WIDTH, CONFIG.GROUND.HEIGHT);
-        const groundMat = new THREE.MeshBasicMaterial({ map: groundTex });
+        const groundMat = new THREE.MeshBasicMaterial({ map: groundTex, transparent: true });
         const ground = new THREE.Mesh(groundGeo, groundMat);
         ground.position.set(0, CONFIG.GROUND.Y, CONFIG.GROUND.Z);
         scene.add(ground);
         this.layers.push(ground);
     }
 
-    private createLayer(scene: THREE.Scene, url: string, z: number, scaleY: number, y: number) {
+    private createLayer(scene: THREE.Scene, url: string, z: number, scaleY: number, y: number, repeatX: number) {
         const loader = new THREE.TextureLoader();
         const tex = loader.load(url);
-        // tex.wrapS = THREE.RepeatWrapping; 
-        // Simple 2-panel loop strategy often better for non-tiling images, 
-        // but for mountains let's just stretch a big plane for now or use repeat if the SVG allows.
-        // Our SVG is simple, let's try repeat.
         tex.wrapS = THREE.RepeatWrapping;
-        tex.repeat.set(3, 1);
+        tex.repeat.set(repeatX, 1);
 
         const geo = new THREE.PlaneGeometry(40, scaleY);
         const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
@@ -72,17 +68,22 @@ export class Background {
         this.layers.push(mesh);
     }
 
-    update(deltaTime: number, speed: number) {
-        // Ground is index 1 (last added)
-        if (this.layers[1]) {
-            const groundTex = (this.layers[1].material as THREE.MeshBasicMaterial).map;
-            if (groundTex) groundTex.offset.x += CONFIG.GROUND.SPEED * deltaTime * speed;
+    update(cameraX: number) {
+        // Sky tracks camera exactly (infinite distance)
+        this.sky.position.x = cameraX;
+
+        // Mountains track camera, texture offsets slightly for parallax
+        if (this.layers[0]) {
+            this.layers[0].position.x = cameraX;
+            const mtTex = (this.layers[0].material as THREE.MeshBasicMaterial).map;
+            if (mtTex) mtTex.offset.x = cameraX * 0.015;
         }
 
-        // Mountains index 0
-        if (this.layers[0]) {
-            const mtTex = (this.layers[0].material as THREE.MeshBasicMaterial).map;
-            if (mtTex) mtTex.offset.x += CONFIG.MOUNTAINS.SPEED * deltaTime * speed;
+        // Ground track camera, texture offsets for mid-ground depth
+        if (this.layers[1]) {
+            this.layers[1].position.x = cameraX;
+            const groundTex = (this.layers[1].material as THREE.MeshBasicMaterial).map;
+            if (groundTex) groundTex.offset.x = cameraX * 0.05;
         }
     }
 }

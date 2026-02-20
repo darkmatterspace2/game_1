@@ -1,0 +1,15 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <!-- Base Color -->
+    <rect width="64" height="64" fill="#CD7F32" />
+    
+    <!-- Pattern for cracked ground / cobblestone -->
+    <path d="M 0 16 L 32 20 L 64 12" fill="none" stroke="#5E3A18" stroke-width="4" />
+    <path d="M 0 48 L 24 44 L 64 50" fill="none" stroke="#5E3A18" stroke-width="4" />
+    
+    <path d="M 20 0 L 16 16 M 48 0 L 52 12 M 32 20 L 28 44 M 64 24 L 54 48 M 12 48 L 16 64 M 44 48 L 40 64" fill="none" stroke="#5E3A18" stroke-width="4" />
+
+    <!-- Top Highlight -->
+    <path d="M 0 0 L 64 0" fill="none" stroke="#E6A875" stroke-width="8" opacity="0.6"/>
+    <!-- Left Highlight -->
+    <path d="M 0 0 L 0 64" fill="none" stroke="#E6A875" stroke-width="8" opacity="0.5"/>
+</svg>

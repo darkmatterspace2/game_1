@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { Player } from './Player';
-import { Obstacle } from './Obstacle';
-import { checkCollision } from './Collision';
+import { Level } from './Level';
 import { Background } from './Background';
+import { Enemy } from './Enemy';
 
 export class SceneManager {
     private scene: THREE.Scene;
@@ -13,13 +13,12 @@ export class SceneManager {
     // Game Entities
     private player: Player;
     private background: Background;
-    private obstacles: Obstacle[] = [];
+    private level: Level;
+    private enemies: Enemy[] = [];
 
     // Game State
     private gameActive: boolean = false;
     private score: number = 0;
-    private speedMultiplier: number = 1;
-    private spawnTimer: number = 0;
 
     // Inputs
     private input = { left: false, right: false, jump: false };
@@ -50,6 +49,7 @@ export class SceneManager {
 
         // --- Game Setup ---
         this.background = new Background(this.scene);
+        this.level = new Level(this.scene);
         this.player = new Player(this.scene);
         this.setupInputs();
         this.setupUI();
@@ -129,17 +129,13 @@ export class SceneManager {
     private startGame() {
         this.gameActive = true;
         this.score = 0;
-        this.speedMultiplier = 1;
-        this.spawnTimer = 0;
 
         // Reset Player
-        // Re-creating player or resetting position might be cleaner. 
-        // For now, hard reset pos.
-        this.player.mesh.position.set(-4, -3.5, 0);
+        this.player.mesh.position.set(-2, 4, 0);
 
-        // Clear obstacles
-        this.obstacles.forEach(o => o.remove(this.scene));
-        this.obstacles = [];
+        // Reset Enemies
+        this.enemies.forEach(e => e.die(this.scene));
+        this.enemies = this.level.initialEnemies.map(s => new Enemy(this.scene, s.x, s.y));
 
         // UI
         this.updateScoreUI();
@@ -189,49 +185,54 @@ export class SceneManager {
     private update(deltaTime: number): void {
         if (!this.gameActive) return;
 
-        // Difficulty & Score
-        this.speedMultiplier += deltaTime * 0.02;
-        this.score += deltaTime * 10;
-        this.updateScoreUI();
+        // Player Physics
+        this.player.update(deltaTime, this.input, this.level);
 
-        // Background
-        this.background.update(deltaTime, this.speedMultiplier);
+        // Camera Follow (Clamp to avoid seeing negative dead space if desired, or just follow)
+        // For a Mario clone, usually camera only moves right or follows exactly bounded by level.
+        // We'll just perfectly track X for now.
+        this.camera.position.x = Math.max(0, this.player.mesh.position.x);
 
-        // Player
-        this.player.update(deltaTime, this.input);
+        // Background Parallax
+        this.background.update(this.camera.position.x);
 
-        // Obstacles
-        this.spawnTimer -= deltaTime;
-        if (this.spawnTimer <= 0) {
-            this.spawnObstacle();
-            // Spawn rate gets faster as speed increases
-            this.spawnTimer = (1.5 + Math.random() * 1.5) / (this.speedMultiplier * 0.8);
-        }
+        // Enemies update & resolve collision
+        for (let i = this.enemies.length - 1; i >= 0; i--) {
+            const enemy = this.enemies[i];
+            enemy.update(deltaTime, this.level);
 
-        for (let i = this.obstacles.length - 1; i >= 0; i--) {
-            const obs = this.obstacles[i];
-            obs.update(deltaTime, this.speedMultiplier);
-
-            // Collision
-            if (checkCollision(this.player.mesh, obs.mesh)) {
-                this.gameOver();
+            if (!enemy.active) {
+                enemy.die(this.scene);
+                this.enemies.splice(i, 1);
+                continue;
             }
 
-            // Clean up
-            if (!obs.active) {
-                obs.remove(this.scene);
-                this.obstacles.splice(i, 1);
+            // Simple box collision
+            const dx = Math.abs(this.player.mesh.position.x - enemy.mesh.position.x);
+            const dy = Math.abs(this.player.mesh.position.y - enemy.mesh.position.y);
+
+            // AABB hit Check
+            if (dx < (this.player.width / 2 + enemy.width / 2) && dy < (this.player.height / 2 + enemy.height / 2)) {
+                // If the player is falling and their bottom edge hits the top half of the enemy -> Stomp
+                if (this.player.mesh.position.y - this.player.height / 2 > enemy.mesh.position.y - enemy.height / 4) {
+                    this.score += 100;
+                    this.updateScoreUI();
+
+                    enemy.die(this.scene);
+                    this.enemies.splice(i, 1);
+
+                    this.player.bounce();
+                } else {
+                    // Touched from side -> Game Over
+                    this.gameOver();
+                }
             }
         }
-    }
 
-    private spawnObstacle() {
-        // Spawn from right edge
-        // Camera width is approx 10 * aspect. 
-        // Let's spawn at x = 15 to be safe
-        const spawnX = 15;
-        const spawnY = -4; // Ground levelish
-        this.obstacles.push(new Obstacle(this.scene, spawnX, spawnY));
+        // Check game over (falling into pit)
+        if (this.player.mesh.position.y < -10) {
+            this.gameOver();
+        }
     }
 
     private render(): void {

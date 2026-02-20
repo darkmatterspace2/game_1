@@ -1,12 +1,87 @@
-<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="skyGradient" x1="0" x2="0" y1="0" y2="1">
-      <stop offset="0%" stop-color="#4fc3f7"/>
-      <stop offset="100%" stop-color="#e1f5fe"/>
-    </linearGradient>
-  </defs>
-  <rect width="800" height="600" fill="url(#skyGradient)"/>
-  <circle cx="100" cy="100" r="40" fill="#fff" opacity="0.8"/>
-  <circle cx="140" cy="120" r="50" fill="#fff" opacity="0.8"/>
-  <circle cx="600" cy="150" r="60" fill="#fff" opacity="0.6"/>
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <defs>
+        <!-- Vibrant Sky Gradient -->
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3FA9F5" />
+            <stop offset="50%" stop-color="#7ECCF8" />
+            <stop offset="100%" stop-color="#D9F1FE" />
+        </linearGradient>
+
+        <!-- Cloud Gradients -->
+        <linearGradient id="cloudMain" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFFFF" />
+            <stop offset="80%" stop-color="#F2FBFF" />
+            <stop offset="100%" stop-color="#D9F1FE" />
+        </linearGradient>
+        
+        <!-- Glow for Sun -->
+        <filter id="sunGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="30" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+
+        <!-- Cloud Prototype -->
+        <g id="bigCloud">
+            <!-- Cloud Shadow Base -->
+            <path d="M 60 180 C 60 130, 90 90, 140 90 C 160 50, 210 20, 270 20 C 330 20, 380 50, 400 90 C 450 90, 500 130, 500 180 Z" fill="#A5DEFB" opacity="0.6"/>
+            <!-- Main Cloud Form -->
+            <path d="M 70 170 C 70 120, 100 80, 150 80 C 170 40, 220 10, 280 10 C 340 10, 390 40, 410 80 C 460 80, 510 120, 510 170 C 510 200, 480 230, 430 230 L 150 230 C 100 230, 70 200, 70 170 Z" fill="url(#cloudMain)"/>
+            <!-- Cloud Highlights (Cartoon aesthetic) -->
+            <path d="M 150 80 C 170 40, 220 10, 280 10 C 320 10, 355 25, 380 50" fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" opacity="0.9"/>
+            <path d="M 430 110 C 460 110, 480 130, 490 150" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" opacity="0.9"/>
+            <path d="M 110 110 C 100 130, 95 150, 95 170" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" opacity="0.9"/>
+        </g>
+
+        <!-- Small Cloud Prototype -->
+        <g id="smallCloud">
+            <path d="M 30 90 C 30 60, 50 40, 80 40 C 90 20, 120 10, 150 10 C 180 10, 210 20, 220 40 C 250 40, 270 60, 270 90 C 270 110, 250 120, 220 120 L 80 120 C 50 120, 30 110, 30 90 Z" fill="url(#cloudMain)"/>
+            <path d="M 80 40 C 90 20, 120 10, 150 10 C 170 10, 190 15, 205 25" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+            <path d="M 235 60 C 245 65, 255 75, 255 90" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" opacity="0.9"/>
+        </g>
+        
+        <!-- Star Prototype for upper sky -->
+        <g id="sparkle">
+            <path d="M 20 0 L 25 15 L 40 20 L 25 25 L 20 40 L 15 25 L 0 20 L 15 15 Z" fill="#FFFFFF" opacity="0.7"/>
+        </g>
+    </defs>
+
+    <!-- Base Sky -->
+    <rect width="1920" height="1080" fill="url(#skyGrad)" />
+
+    <!-- Distant atmospheric haze layer -->
+    <rect width="1920" height="300" y="780" fill="#E6F4FE" opacity="0.3" />
+
+    <!-- Sparkles -->
+    <use href="#sparkle" x="300" y="80" transform="scale(0.5)" />
+    <use href="#sparkle" x="850" y="150" transform="scale(0.4)" />
+    <use href="#sparkle" x="1400" y="90" transform="scale(0.6)" />
+    <use href="#sparkle" x="1750" y="180" transform="scale(0.3)" />
+
+    <!-- The Sun -->
+    <circle cx="1500" cy="300" r="140" fill="#FFC83D" filter="url(#sunGlow)"/>
+    <circle cx="1500" cy="300" r="100" fill="#FFE168" />
+    <circle cx="1500" cy="300" r="70" fill="#FFF2B2" />
+    <circle cx="1500" cy="300" r="40" fill="#FFFFFF" />
+    <path d="M 1500 50 L 1500 120 M 1500 480 L 1500 550 M 1250 300 L 1320 300 M 1680 300 L 1750 300 M 1323 123 L 1373 173 M 1677 477 L 1627 427 M 1677 123 L 1627 173 M 1323 477 L 1373 427" stroke="#FFE168" stroke-width="12" stroke-linecap="round" opacity="0.6" />
+
+    <!-- Far CloudsLayer (Smaller, more transparent, slower parallax visually) -->
+    <use href="#smallCloud" x="100" y="450" transform="scale(0.8)" opacity="0.6"/>
+    <use href="#smallCloud" x="700" y="550" transform="scale(0.6)" opacity="0.5"/>
+    <use href="#smallCloud" x="1300" y="400" transform="scale(0.7)" opacity="0.6"/>
+    <use href="#smallCloud" x="1700" y="500" transform="scale(0.5)" opacity="0.5"/>
+
+    <!-- Mid Clouds Layer -->
+    <use href="#bigCloud" x="200" y="200" transform="scale(0.7)"/>
+    <use href="#bigCloud" x="900" y="300" transform="scale(0.8)"/>
+    <use href="#bigCloud" x="1600" y="150" transform="scale(0.6)"/>
+
+    <!-- Foreground Clouds Layer (Big, overlapping) -->
+    <use href="#bigCloud" x="-100" y="600" transform="scale(1.2)"/>
+    <use href="#bigCloud" x="500" y="700" transform="scale(1.5)"/>
+    <use href="#bigCloud" x="1300" y="650" transform="scale(1.1)"/>
+    <use href="#bigCloud" x="1800" y="750" transform="scale(1.3)"/>
+
+    <!-- Foreground Mist to blend with mountains -->
+    <path d="M 0 1080 L 0 950 Q 500 850 960 950 T 1920 950 L 1920 1080 Z" fill="#FFFFFF" opacity="0.2" />
+    <path d="M 0 1080 L 0 1000 Q 400 900 800 1000 T 1920 1000 L 1920 1080 Z" fill="#FFFFFF" opacity="0.4" />
 </svg>
